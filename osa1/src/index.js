@@ -1,23 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 
-const Hello = (props) => {
-  return (
-    <div>
-      <p>Hello, {props.name}, you are {props.age} years old</p>
-    </div>
+const Display = ({ counter }) => <div>{counter}</div>
+
+  const Button = ({ handleClick, text }) => (
+    <button onClick={handleClick}>{text}</button>
   )
-}
 
-const App = () => {
-  const nimi = 'Pekka'
-  const ika = 10
+const App = (props) => {
+  const [ counter, setCounter ] = useState(0)
+  const setToValue = (value) => setCounter(value)
 
   return (
     <div>
-      <h1>Greetings</h1>
-      <Hello name="Arto" age={26 + 10}/>
-      <Hello name={nimi} age={ika}/>
+      <Display counter={counter} />
+      <Button handleClick={() => setToValue(counter + 1)} text='plus'/>
+      <Button handleClick={() => setToValue(counter - 1)} text='minus'/>
+      <Button handleClick={() => setToValue(0)} text='zero'/>
     </div>
   )
 }
