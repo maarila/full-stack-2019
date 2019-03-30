@@ -1,22 +1,48 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 
-const Display = ({ counter }) => <div>{counter}</div>
 
-  const Button = ({ handleClick, text }) => (
-    <button onClick={handleClick}>{text}</button>
+const History = (props) => {
+  if (props.allClicks.length === 0) {
+    return (
+      <div>sovellusta käytetään nappeja painelemalla</div>
+    )
+  }
+  return (
+    <div>
+        näppäilyhistoria: {props.allClicks.join(' ')}
+    </div>
   )
+}
+
+const Button = ({ handleClick, text }) => (
+  <button onClick={handleClick}>{text}</button>
+)
 
 const App = (props) => {
-  const [ counter, setCounter ] = useState(0)
-  const setToValue = (value) => setCounter(value)
+  const [left, setLeft] = useState(0)
+  const [right, setRight] = useState(0)
+  const [allClicks, setAll] = useState([])
+
+  const handleLeftClick = () => {
+    setAll(allClicks.concat('L'))
+    setLeft(left + 1)
+  }
+
+  const handleRightClick = () => {
+    setAll(allClicks.concat('R'))
+    setRight(right + 1)
+  }
 
   return (
     <div>
-      <Display counter={counter} />
-      <Button handleClick={() => setToValue(counter + 1)} text='plus'/>
-      <Button handleClick={() => setToValue(counter - 1)} text='minus'/>
-      <Button handleClick={() => setToValue(0)} text='zero'/>
+      <div>
+          {left}
+        <Button handleClick={handleLeftClick} text='vasen' />
+        <Button handleClick={handleRightClick} text='oikea' />
+          {right}
+        <History allClicks={allClicks} />
+      </div>
     </div>
   )
 }
