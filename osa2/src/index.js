@@ -1,60 +1,29 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import App from './App'
 
-const Header = (props) => {
-  return (
-    <h1>{props.course.name}</h1>
-  )
-}
+const notes = [
+  {
+    id: 1,
+    content: 'HTML on helppoa',
+    date: '2019-01-10T17:30:31.098Z',
+    important: true
 
-const Content = (props) => {
-  return (
-    <div>
-      <Part part={props.course.parts[0]} />
-      <Part part={props.course.parts[1]} />
-      <Part part={props.course.parts[2]} />
-    </div>
-  )
-}
+  },
+  {
+    id: 2,
+    content: 'Selain pystyy suorittamaan vain javascriptiä',
+    date: '2019-01-10T18:39:34.091Z',
+    important: false
 
-const Part = (props) => {
-  return (
-    <p>{props.part.name} {props.part.exercises}</p>
-  )
-}
+  },
+  {
+    id: 3,
+    content: 'HTTP-protokollan tärkeimmät metodit ovat GET ja POST',
+    date: '2019-01-10T19:20:14.298Z',
+    important: true
 
-const Total = (props) => {
-  return (
-    <p>yhteensä {props.course.parts.map(part => part.exercises).reduce((a,b) => a+b)}</p>
-  )
-}
-
-const App = () => {
-  const course = {
-    name: 'Half Stack -sovelluskehitys',
-    parts: [
-      {
-        name: 'Reactin perusteet',
-        exercises: 10
-      },
-      {
-        name: 'Tiedonvälitys propseilla',
-        exercises: 7
-      },
-      {
-        name: 'Komponenttien tila',
-        exercises: 14
-      }
-    ]
   }
+]
 
-  return (
-    <div>
-      <Header course={course} />
-      <Content course={course} />
-      <Total course={course} />
-    </div>
-  )
-}
-
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<App notes={notes} />, document.getElementById('root'))
