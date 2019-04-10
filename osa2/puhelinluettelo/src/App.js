@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import personService from './services/persons';
 
 const Header = ({ text }) => <h1>{text}</h1>;
 
 const Subheader = ({ text }) => <h2>{text}</h2>;
 
-const Persons = ({ persons }) => {
-  return persons.map(person => <Person key={person.name} person={person} />);
+const Persons = ({ persons, handleClick }) => {
+  return persons.map(person => (
+    <Person key={person.name} person={person} handleClick={handleClick} />
+  ));
 };
 
-const Person = ({ person }) => (
+const Person = ({ person, handleClick }) => (
   <div>
     {person.name} {person.number}
+    <button onClick={() => handleClick(person.id)}>poista</button>
   </div>
 );
 
@@ -54,25 +57,44 @@ const App = () => {
   const [newFilter, setNewFilter] = useState('');
 
   useEffect(() => {
-    axios.get('http://localhost:3001/persons').then(response => {
-      setPersons(response.data);
+    personService.getAll().then(response => {
+      setPersons(response);
     });
   }, []);
 
   const addName = event => {
     event.preventDefault();
-    const personExists = persons.filter(person => person.name === newName);
+    const personExists = persons.find(person => person.name === newName);
 
-    if (personExists.length) {
-      alert(`${newName} on jo luettelossa`);
+    if (personExists && personExists.number !== newNumber) {
+      const replaceNumber = window.confirm(
+        `${newName} on jo luettelossa, korvataanko vanha numero uudella`
+      );
+      if (replaceNumber) {
+        const updatedPerson = {
+          id: personExists.id,
+          name: personExists.name,
+          number: newNumber
+        };
+        personService.update(updatedPerson).then(response => {
+          setPersons(
+            persons.filter(person => person.id !== response.id).concat(response)
+          );
+        });
+      }
+    } else if (personExists) {
+      alert(`${personExists.name} on jo luettelossa`);
+      return;
     } else {
       const newPerson = {
         name: newName,
         number: newNumber
       };
-      setPersons(persons.concat(newPerson));
-      setNewName('');
-      setNewNumber('');
+      personService.create(newPerson).then(response => {
+        setPersons(persons.concat(response));
+        setNewName('');
+        setNewNumber('');
+      });
     }
   };
 
@@ -86,6 +108,16 @@ const App = () => {
 
   const handleFilterChange = event => {
     setNewFilter(event.target.value);
+  };
+
+  const removePerson = id => {
+    const personToRemove = persons.find(person => person.id === id);
+    const result = window.confirm(`Poistetaanko ${personToRemove.name}?`);
+    if (result) {
+      personService.remove(id).then(response => {
+        setPersons(persons.filter(person => person.id !== id));
+      });
+    }
   };
 
   return (
@@ -109,12 +141,13 @@ const App = () => {
       <Subheader text="Numerot" />
       <div>
         {newFilter.length === 0 ? (
-          <Persons persons={persons} />
+          <Persons persons={persons} handleClick={removePerson} />
         ) : (
           <Persons
             persons={persons.filter(person =>
               person.name.toLowerCase().includes(newFilter.toLowerCase())
             )}
+            handleClick={removePerson}
           />
         )}
       </div>
