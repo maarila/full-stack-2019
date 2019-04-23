@@ -26,6 +26,14 @@ const Filter = ({ text, value, handleChange }) => {
   );
 };
 
+const Notification = ({ message, classToUse }) => {
+  if (message === null) {
+    return null;
+  }
+
+  return <div className={classToUse}>{message}</div>;
+};
+
 const PersonForm = ({
   name,
   number,
@@ -55,6 +63,8 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [newFilter, setNewFilter] = useState('');
+  const [notification, setNotification] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     personService.getAll().then(response => {
@@ -76,11 +86,30 @@ const App = () => {
           name: personExists.name,
           number: newNumber
         };
-        personService.update(updatedPerson).then(response => {
-          setPersons(
-            persons.filter(person => person.id !== response.id).concat(response)
-          );
-        });
+        personService
+          .update(updatedPerson)
+          .then(response => {
+            setPersons(
+              persons
+                .filter(person => person.id !== response.id)
+                .concat(response)
+            );
+            setNotification(`Numero muutettu henkilölle ${personExists.name}.`);
+            setNewName('');
+            setNewNumber('');
+            setTimeout(() => {
+              setNotification(null);
+            }, 3000);
+          })
+          .catch(error => {
+            setErrorMessage(`Henkilö ${personExists.name} oli jo poistettu.`);
+            setNewName('');
+            setNewNumber('');
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 3000);
+            setPersons(persons.filter(person => person.name !== newName));
+          });
       }
     } else if (personExists) {
       alert(`${personExists.name} on jo luettelossa`);
@@ -92,8 +121,12 @@ const App = () => {
       };
       personService.create(newPerson).then(response => {
         setPersons(persons.concat(response));
+        setNotification(`${newName} lisätty.`);
         setNewName('');
         setNewNumber('');
+        setTimeout(() => {
+          setNotification(null);
+        }, 3000);
       });
     }
   };
@@ -116,6 +149,10 @@ const App = () => {
     if (result) {
       personService.remove(id).then(response => {
         setPersons(persons.filter(person => person.id !== id));
+        setNotification(`${personToRemove.name} poistettu.`);
+        setTimeout(() => {
+          setNotification(null);
+        }, 3000);
       });
     }
   };
@@ -123,6 +160,8 @@ const App = () => {
   return (
     <div>
       <Header text="Puhelinluettelo" />
+      <Notification message={notification} classToUse={'message'} />
+      <Notification message={errorMessage} classToUse={'error'} />
       <Filter
         text="rajaa näytettäviä: "
         value={newFilter}

@@ -19,6 +19,21 @@
       "name": "Lea Kutvonen",
       "number": "040-123456",
       "id": 4
+    },
+    {
+      "name": "Herto Allas",
+      "number": "09-1234567",
+      "id": 5
+    },
+    {
+      "name": "Tirtti Maenari",
+      "number": "1010-1234567",
+      "id": 6
+    },
+    {
+      "id": 7,
+      "name": "Hilipati Hippa",
+      "number": "888-664422"
     }
   ]
 }
