@@ -6,12 +6,17 @@
   "scripts": {
     "start": "node index.js",
     "watch": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:ui": "rm -rf build && cd ../osa2 && npm run build --prod && cp -r build ../osa3-note-backend/",
+    "deploy": "git push heroku master",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",
+    "logs:prod": "heroku logs --tail"
   },
   "author": "Mika Ä",
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
     "express": "^4.16.4"
   },
   "devDependencies": {

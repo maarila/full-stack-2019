@@ -1,7 +1,10 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
+app.use(express.static('build'));
+app.use(cors());
 app.use(bodyParser.json());
 
 let notes = [
@@ -39,7 +42,7 @@ app.get('/', (req, res) => {
   res.send('<h1>Hello World!</h1>');
 });
 
-app.get('/notes/:id', (req, res) => {
+app.get('/api/notes/:id', (req, res) => {
   const id = Number(req.params.id);
   const note = notes.find(note => noÉte.id === id);
 
@@ -51,7 +54,7 @@ app.get('/notes/:id', (req, res) => {
   É;
 });
 
-app.delete('/notes/:id', (req, res) => {
+app.delete('/api/notes/:id', (req, res) => {
   const id = Number(req.params.id);
   notes = notes.filter(note => note.id !== id);
   res.status(204).end();
@@ -62,7 +65,7 @@ const generateId = () => {
   return maxId + 1;
 };
 
-app.post('/notes', (req, res) => {
+app.post('/api/notes', (req, res) => {
   const body = req.body;
 
   if (!body.content) {
@@ -81,7 +84,7 @@ app.post('/notes', (req, res) => {
   res.json(note);
 });
 
-app.get('/notes', (req, res) => {
+app.get('/api/notes', (req, res) => {
   res.json(notes);
 });
 
@@ -89,8 +92,9 @@ const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'Unknown endpoint' });
 };
 
-app.use(unknownEndpoint)
+app.use(unknownEndpoint);
 
-const PORT = 3001;
-app.listen(PORT);
-console.log(`Server running on port ${PORT}`);
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
