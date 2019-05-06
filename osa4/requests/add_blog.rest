@@ -2,7 +2,7 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-  "title": "Eka!",
+  "title": "Refaktoroitu(ko?)",
   "author": "Allekirjoittanut",
   "url": "http://localhost:3000/blogini",
   "likes": 0
